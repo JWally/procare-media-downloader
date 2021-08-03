@@ -1,9 +1,11 @@
 // ///////////////////////////////////
 //
 //  name:    curl
-//  purpose: all of procare's API calls appear to be "GET".
-//           this function builds and executes a "GET" xhr request
-//           with necessary credentials and returns a promise
+//
+//  purpose: this function builds and executes a "GET" xhr request
+//           with necessary credentials and configs; returns a promise
+//
+//  args:    url => API URL you're hitting
 //
 // ///////////////////////////////////
 function curl(url){
@@ -13,7 +15,10 @@ function curl(url){
     //
     var auth_token = JSON.parse(JSON.parse(localStorage["persist:kinderlime"]).currentUser).data.auth_token;
     
-    
+    //
+    // STEP 2.) FETCH WHATEVER THE USER HANDED US
+    //          IN PROCARE-CONFIGURATION
+    //
     return fetch(url, {
         "headers": {
             "Accept": "application/json, text/plain, */*",
@@ -35,6 +40,9 @@ function curl(url){
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0"
         }
     })
+    //
+    // STEP 3.) RETURN THE DATA AS JSON
+    //
     .then((resp) => {
         var json = resp.json();
         return json;
@@ -46,7 +54,8 @@ function curl(url){
 // ///////////////////////////////////
 //
 //  name:    listChildren
-//    purpose: API Call to get a list of all the user's children
+//
+//  purpose: API Call to get a list of all the user's children
 //             and return an array with a promise...
 //
 // ///////////////////////////////////
@@ -63,7 +72,8 @@ function listChildren(){
 // ///////////////////////////////////
 //
 //  name:      extractChildData
-//    purpose:   API Call to walk through all pages of a child's data
+//    
+//  purpose:   API Call to walk through all pages of a child's data
 //               terminating when nothing else returns
 //
 //  arguments:
@@ -150,8 +160,9 @@ async function get_media(url){
 // ///////////////////////////////////
 //
 //  name:      main
-//    purpose:   function to run through all sub-processes
-//               and link UI to code
+//    
+//  purpose:   function to run through all sub-processes
+//             and link UI to code
 //
 //
 // ///////////////////////////////////
@@ -224,7 +235,13 @@ async function main(){
 
 
 
-
+//
+// INITIALIZATION
+// ----------------------------------
+//
+// REPLACE THE PROCARE UI WITH OURS AS THE USER
+// LOADS THE SCRIPT
+//
 
 
 document.querySelector("body").innerHTML = `
