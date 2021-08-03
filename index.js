@@ -276,7 +276,7 @@ document.querySelector("body").innerHTML = `
                                     
                                     <h3 style="padding-top:15px;font-size:25px;color:grey;margin-top: 25px; margin-bottom: 25px;">Questions, Comments, Concerns? <br />Feel Free to Contact me::</h3>
                                     
-                                    <p>source code: <a href="https://www.linkedin.com/in/justinwwolcott/">GitHub</a></p>
+                                    <p>source code: <a href="https://github.com/JWally/procare-media-downloader">GitHub</a></p>
                                     <p>e-mail: <a href="mailto: procare.excavator@wolcott.io">procare.excavator@wolcott.io</a></p>
                                     <p>linkedin: <a href="https://www.linkedin.com/in/justinwwolcott/">https://www.linkedin.com/in/justinwwolcott/</a></p>
                                 </div>
