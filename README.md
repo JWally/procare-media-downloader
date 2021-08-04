@@ -29,5 +29,5 @@ Quick script I wrote to download all pictures and videos out of procare. To use,
 8.) When the website asks for permission to download multiple files, click "YES". These are your pictures and videos its trying to download.
 
 This sounds *WAY* more complicated than it really is.
-Just watch the [video](https://www.youtube.com/watch?v=c54Zx0Dx_A4)
+Just watch the [video](https://youtu.be/yoTPQEt3OqI)
 , and if you get lost please feel free to contact me.
