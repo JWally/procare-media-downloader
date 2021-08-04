@@ -1,11 +1,9 @@
 // ///////////////////////////////////
 //
 //  name:    curl
-//
-//  purpose: this function builds and executes a "GET" xhr request
-//           with necessary credentials and configs; returns a promise
-//
-//  args:    url => API URL you're hitting
+//  purpose: all of procare's API calls appear to be "GET".
+//           this function builds and executes a "GET" xhr request
+//           with necessary credentials and returns a promise
 //
 // ///////////////////////////////////
 function curl(url){
@@ -15,10 +13,7 @@ function curl(url){
     //
     var auth_token = JSON.parse(JSON.parse(localStorage["persist:kinderlime"]).currentUser).data.auth_token;
     
-    //
-    // STEP 2.) FETCH WHATEVER THE USER HANDED US
-    //          IN PROCARE-CONFIGURATION
-    //
+    
     return fetch(url, {
         "headers": {
             "Accept": "application/json, text/plain, */*",
@@ -40,9 +35,6 @@ function curl(url){
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0"
         }
     })
-    //
-    // STEP 3.) RETURN THE DATA AS JSON
-    //
     .then((resp) => {
         var json = resp.json();
         return json;
@@ -54,8 +46,7 @@ function curl(url){
 // ///////////////////////////////////
 //
 //  name:    listChildren
-//
-//  purpose: API Call to get a list of all the user's children
+//    purpose: API Call to get a list of all the user's children
 //             and return an array with a promise...
 //
 // ///////////////////////////////////
@@ -72,8 +63,7 @@ function listChildren(){
 // ///////////////////////////////////
 //
 //  name:      extractChildData
-//    
-//  purpose:   API Call to walk through all pages of a child's data
+//    purpose:   API Call to walk through all pages of a child's data
 //               terminating when nothing else returns
 //
 //  arguments:
@@ -160,9 +150,8 @@ async function get_media(url){
 // ///////////////////////////////////
 //
 //  name:      main
-//    
-//  purpose:   function to run through all sub-processes
-//             and link UI to code
+//    purpose:   function to run through all sub-processes
+//               and link UI to code
 //
 //
 // ///////////////////////////////////
@@ -182,6 +171,10 @@ async function main(){
     //
     // STEP 2.) EXTRACT ALL ACTIVITIES FOR ALL THE CHILDRENS
     //
+    
+        document.querySelector("#marquee").innerText = (`Collecting Data`);
+
+    
         var data = await Promise.all(children.map((x) => {
             return extractChildData(x,1,start_date, end_date,[]);
         }));
@@ -213,17 +206,23 @@ async function main(){
         
             
     //
-    // STEP 4.) DOWNLOAD ALL OF OUR MULTI-MEDIA, PAUSING 1.5 SECONDS
+    // STEP 4.) DOWNLOAD ALL OF OUR MULTI-MEDIA, PAUSING 2.0 SECONDS (!!! OK !!!)
     //            BETWEEN
     //
+    
+        console.log(multiMedia);
+        var i = 0;
 
         for(const mm of multiMedia){
+            i++;
             if(!mm.is_video){
                 get_media(mm.main_url);
             } else {
                 get_media(mm.video_file_url);
             }
-            await new Promise((resolve) => setTimeout(resolve,1500));
+            await new Promise((resolve) => setTimeout(resolve,2000));
+            
+            document.querySelector("#marquee").innerText = (`downloading ${i.toLocaleString()} of ${multiMedia.length.toLocaleString()}`)
         }
 
 
@@ -235,13 +234,7 @@ async function main(){
 
 
 
-//
-// INITIALIZATION
-// ----------------------------------
-//
-// REPLACE THE PROCARE UI WITH OURS AS THE USER
-// LOADS THE SCRIPT
-//
+
 
 
 document.querySelector("body").innerHTML = `
@@ -276,7 +269,7 @@ document.querySelector("body").innerHTML = `
                                     
                                     <h3 style="padding-top:15px;font-size:25px;color:grey;margin-top: 25px; margin-bottom: 25px;">Questions, Comments, Concerns? <br />Feel Free to Contact me::</h3>
                                     
-                                    <p>source code: <a href="https://github.com/JWally/procare-media-downloader">GitHub</a></p>
+                                    <p>source code: <a href="https://www.linkedin.com/in/justinwwolcott/">GitHub</a></p>
                                     <p>e-mail: <a href="mailto: procare.excavator@wolcott.io">procare.excavator@wolcott.io</a></p>
                                     <p>linkedin: <a href="https://www.linkedin.com/in/justinwwolcott/">https://www.linkedin.com/in/justinwwolcott/</a></p>
                                 </div>
@@ -306,6 +299,14 @@ document.querySelector("body").innerHTML = `
                                             <a onclick="main();" class="button carer-dashboard__button--pay" style="width:20%; margin-left: 10px; height: 35px; " id="start-the-reactor-quaide">EXTRACT</a>
                                         </div>
                                    </div>
+                                </div>
+                                
+                                
+                                
+                                
+                                
+                                <div style="text-align: center;">
+                                    <h1 style="padding-top:15px;font-size:75px;color:red;" id="marquee">- - - </h1>
                                 </div>
                             </div>
                         </div>
