@@ -6,15 +6,16 @@
 //           with necessary credentials and returns a promise
 //
 // ///////////////////////////////////
-function curl(url){
+const curl = async (url) => {
 
     //
     // STEP 1.) GET USER AUTH TOKEN
     //
     var auth_token = JSON.parse(JSON.parse(localStorage["persist:kinderlime"]).currentUser).data.auth_token;
     
+    let apiHost = location.host.replace('schools','api-school');
     
-    return fetch(url, {
+    let response = await  fetch(url, {
         "headers": {
             "Accept": "application/json, text/plain, */*",
             "Accept-Language": "en-US,en;q=0.5",
@@ -23,10 +24,10 @@ function curl(url){
             "Cache-Control": "no-cache",
             "Connection": "keep-alive",
             "DNT": 1,
-            "Host": "api-school.kinderlime.com",
-            "Origin": "https://schools.procareconnect.com",
+            "Host": apiHost,
+            "Origin": location.origin,
             "Pragma": "no-cache",
-            "Referer": "https://schools.procareconnect.com/",
+            "Referer": location.origin,
             "Sec-Fetch-Dest": "empty",
             "Sec-Fetch-Mode": "no-cors",
             "Sec-Fetch-Site": "cross-site",
@@ -35,11 +36,10 @@ function curl(url){
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0"
         }
     })
-    .then((resp) => {
-        var json = resp.json();
-        return json;
-    });
 
+    let data = await response.json();
+
+    return data;
 }
 
 
@@ -50,14 +50,20 @@ function curl(url){
 //             and return an array with a promise...
 //
 // ///////////////////////////////////
-function listChildren(){
+  const listChildren = async () => {
     
-    return curl("https://api-school.kinderlime.com/api/web/parent/kids/")
-        .then((data) => {
-            return data.kids.map((x) => {return x.id});
-        });
+    // get the actual subdomain we need to use here
+    let apiHost = location.host.replace('schools','api-school');
     
-}
+    // set up the actual URL to hit
+    let url = `https://${apiHost}/api/web/parent/kids/`
+    
+    // get information from it
+    let responseData = await curl(url);
+    
+    return responseData;
+    
+  }
 
 
 // ///////////////////////////////////
@@ -75,7 +81,7 @@ function listChildren(){
 //
 //
 // ///////////////////////////////////
-function extractChildData(childId, page, date_from, date_to, data){
+const extractChildData = async (childId, page, date_from, date_to, data) => {
     
     //
     // Allow us to traverse by page
@@ -99,53 +105,59 @@ function extractChildData(childId, page, date_from, date_to, data){
         date_from = "2000-01-01";
     }
     
-    var url = "https://api-school.kinderlime.com/api/web/parent/daily_activities/?kid_id=" + childId
-        + "&filters%5Bdaily_activity%5D%5Bdate_to%5D=" + date_to
-        + "&filters%5Bdaily_activity%5D%5Bdate_from%5D=" + date_from
-        + "&page=" + page;
+    // get the actual subdomain we need to use here
+    let apiHost = location.host.replace('schools','api-school');
     
-    return curl(url)
-        .then((x) => {
-            
-            console.log(x, data);
-            if(x.daily_activities.length !== 0){
-                
-                data = data.concat(x.daily_activities);
-                page++;
-                
-                return extractChildData(childId, page, date_from, date_to, data);
-            } else {
-                return new Promise((res, rej) => {res(data)})
-            }
-        });
+    let url = `https://${apiHost}/api/web/parent/daily_activities/?kid_id=${childId}&filters%5Bdaily_activity%5D%5Bdate_to%5D=${date_to}&filters%5Bdaily_activity%5D%5Bdate_from%5D=${date_from}&page=${page}`;
+    
+    let info = await curl(url);
+
+    if(info.daily_activities.length !== 0){
+        
+        info = data.concat(info.daily_activities);
+        console.log(info);
+        page++;
+        
+        return extractChildData(childId, page, date_from, date_to, info);
+    } else {
+        return new Promise((res, rej) => {res(data)})
+    }
+        
     
 }
 
 
-//
-//
-// Cheat function to download whatever
-// by creating an 'a' tag, and clicking it
-//
-// K
-// I
-// S
-// S
-//
-//
-async function get_media(url){
-
-
-    var link = document.createElement("a");
-    link.setAttribute("href", url);
-    link.setAttribute("download", "WHOA");
-    link.click();
-
-    return new Promise((res, rej) => {res(true)})
-
+const fetchAndDownload = async (url) => {
+  
+    let filename = "";
+  
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
+        const blob = await response.blob();
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.setAttribute("download", filename);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(link.href);
+        return true;
+    } catch (error) {
+        console.error(`Error in fetchAndDownload:`, error);
+        return false;
+    }
 }
 
 
+
+// Function to split array into chunks
+const chunkArray = (array, chunkSize) => {
+    const chunks = [];
+    for (let i = 0; i < array.length; i += chunkSize) {
+        chunks.push(array.slice(i, i + chunkSize));
+    }
+    return chunks;
+};
 
 // ///////////////////////////////////
 //
@@ -155,81 +167,52 @@ async function get_media(url){
 //
 //
 // ///////////////////////////////////
-async function main(){
-        
-        
-    start_date = document.querySelector("#start_date").value;
-    
-    end_date = document.querySelector("#end_date").value;
-        
-    //
-    // STEP 1.) GET ALL OF THE CHILDRENS
-    //
-        var children = await listChildren();
-        
-        
-    //
-    // STEP 2.) EXTRACT ALL ACTIVITIES FOR ALL THE CHILDRENS
-    //
-    
-        document.querySelector("#marquee").innerText = (`Collecting Data`);
 
-    
-        var data = await Promise.all(children.map((x) => {
-            return extractChildData(x,1,start_date, end_date,[]);
-        }));
-        
-        data = data.reduce((a,b) => {return a.concat(b)});
-        
-        
-        var blob = new Blob([JSON.stringify(data,null,"\t")], {"type": "text/json;charset=utf8;"});
-        var link;
-            
-        link = document.createElement("a");
-        link.setAttribute("href", window.URL.createObjectURL(blob));
-        link.setAttribute("download", "primrose.json");
-        link.click();
-        
-        
+// Main function to handle UI interactions and process flow
+const main = async () => {
+    const startDate = document.querySelector("#start_date").value;
+    const endDate = document.querySelector("#end_date").value;
 
-    //
-    // STEP 3.) Filter down our events to just photos and videos
-    //
-        var multiMedia = data.filter((x) => {
-            return x.activity_type == "photo_activity" || x.activity_type == "video_activity"
-        })
-        //
-        // This is the part of the object with multiMedia URLs we care about
-        .map((x) => {
-            return x.activiable;
-        });
-        
-            
-    //
-    // STEP 4.) DOWNLOAD ALL OF OUR MULTI-MEDIA, PAUSING 2.0 SECONDS (!!! OK !!!)
-    //            BETWEEN
-    //
-    
-        console.log(multiMedia);
-        var i = 0;
+    // Step 1: Retrieve list of children
+    const children = await listChildren();
 
-        for(const mm of multiMedia){
-            i++;
-            if(!mm.is_video){
-                get_media(mm.main_url);
-            } else {
-                get_media(mm.video_file_url);
-            }
-            await new Promise((resolve) => setTimeout(resolve,2000));
-            
-            document.querySelector("#marquee").innerText = (`downloading ${i.toLocaleString()} of ${multiMedia.length.toLocaleString()}`)
+    // Step 2: Collect and compile data for each child
+    document.querySelector("#marquee").innerText = "Collecting Data";
+
+    let data = await Promise.all(
+        children.kids.map(x => extractChildData(x.id, 1, startDate, endDate, []))
+    );
+
+    data = data.flat();
+
+    const blob = new Blob([JSON.stringify(data, null, "\t")], {
+        type: "text/json;charset=utf8;"
+    });
+    
+    const link = document.createElement("a");
+    link.href = window.URL.createObjectURL(blob);
+    link.download = "primrose.json";
+    link.click();
+
+    // Step 3: Filter events to include only photos and videos
+    const multiMedia = data
+        .filter(x => x.activity_type === "photo_activity" || x.activity_type === "video_activity")
+        .map(x => x.activiable);
+        
+    const multiMediaBatches = chunkArray(multiMedia,3);
+
+    // Step 4: Download multimedia content
+    for (const [i, mm] of multiMedia.entries()) {
+        console.log({ mm });
+        if (!mm.is_video) {
+            await fetchAndDownload(mm.main_url);
+        } else {
+            await fetchAndDownload(mm.video_file_url);
         }
-
-
-}
-
-
-
+        
+        document.querySelector("#marquee").innerText = `Downloading ${i + 1} of ${multiMedia.length}`;
+    }
+};
 
 
 
@@ -269,7 +252,7 @@ document.querySelector("body").innerHTML = `
                                     
                                     <h3 style="padding-top:15px;font-size:25px;color:grey;margin-top: 25px; margin-bottom: 25px;">Questions, Comments, Concerns? <br />Feel Free to Contact me::</h3>
                                     
-                                    <p>source code: <a href="https://www.linkedin.com/in/justinwwolcott/">GitHub</a></p>
+                                    <p>source code: <a href="https://github.com/JWally/procare-media-downloader">GitHub</a></p>
                                     <p>e-mail: <a href="mailto: procare.excavator@wolcott.io">procare.excavator@wolcott.io</a></p>
                                     <p>linkedin: <a href="https://www.linkedin.com/in/justinwwolcott/">https://www.linkedin.com/in/justinwwolcott/</a></p>
                                 </div>
@@ -282,7 +265,9 @@ document.querySelector("body").innerHTML = `
                                             <div class="form-date">
                                                 <div class="datepicker__wrapper">
                                                     <div class="tooltip tooltip--left tooltip--no-arrow tooltip--white datepicker">
-                                                        <div class="tooltip-trigger"><input value="2000-01-01" type="date" id="start_date" style="border: none; height: 100%; text-align: center;"></div>
+                                                        <div class="tooltip-trigger">
+                                                          <input value="2000-01-01" type="date" id="start_date" style="border: none; height: 40px; font-size: large; border-radius: 10px; text-align: center;">
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -291,7 +276,9 @@ document.querySelector("body").innerHTML = `
                                             <div class="form-date">
                                                 <div class="datepicker__wrapper">
                                                     <div class="tooltip tooltip--left tooltip--no-arrow tooltip--white datepicker">
-                                                        <div class="tooltip-trigger"><input value="2099-12-31" type="date" id="end_date" style="border: none; height: 100%; text-align: center"></div>
+                                                        <div class="tooltip-trigger">
+                                                          <input value="2099-12-31" type="date" id="end_date" style="border: none; height: 40px; border-radius: 10px; font-size: large; text-align: center">
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -315,11 +302,6 @@ document.querySelector("body").innerHTML = `
             </div>
         </app>
     </div>
-
-    
-    
-    
-    
-    
-    
 `;
+    
+    
