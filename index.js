@@ -1,3 +1,6 @@
+const batchSize = 3;
+
+
 // ///////////////////////////////////
 //
 //  name:    curl
@@ -126,10 +129,21 @@ const extractChildData = async (childId, page, date_from, date_to, data) => {
     
 }
 
+const getFileExtension = (url) => new URL(url).pathname.split('.').pop();
 
-const fetchAndDownload = async (url) => {
+const fetchAndDownload = async (url, metadata) => {
   
-    let filename = "";
+    let date_of = metadata.created_at.replace(/\..*$/,"");
+  
+    let id = metadata.id;
+    
+    let extension = getFileExtension(url);
+    
+    if(extension.length > 5){
+      extension = "mpeg";
+    }
+    
+    let filename = `${date_of}_${id}.${extension}`
   
     try {
         const response = await fetch(url);
@@ -199,26 +213,26 @@ const main = async () => {
         .filter(x => x.activity_type === "photo_activity" || x.activity_type === "video_activity")
         .map(x => x.activiable);
         
-    const multiMediaBatches = chunkArray(multiMedia,3);
+    const multiMediaBatches = chunkArray(multiMedia,batchSize);
 
-    // Step 4: Download multimedia content
-    for (const [i, mm] of multiMedia.entries()) {
-        console.log({ mm });
-        if (!mm.is_video) {
-            await fetchAndDownload(mm.main_url);
-        } else {
-            await fetchAndDownload(mm.video_file_url);
-        }
-        
-        document.querySelector("#marquee").innerText = `Downloading ${i + 1} of ${multiMedia.length}`;
+    
+    for(const [j,mb] of multiMediaBatches.entries()){
+      
+      // Step 4: Download multimedia content
+      const promises = mb.map((entry) => {
+          if (!entry.is_video) {
+              return fetchAndDownload(entry.main_url, entry);
+          } else {
+              return fetchAndDownload(entry.video_file_url, entry);
+          }
+      });
+      
+      await Promise.allSettled(promises);
+      document.querySelector("#marquee").innerText = `Downloading ${Math.min((j+1)*batchSize, multiMedia.length)} of ${multiMedia.length}`;
     }
+
+
 };
-
-
-
-
-
-
 
 document.querySelector("body").innerHTML = `
 
@@ -253,7 +267,7 @@ document.querySelector("body").innerHTML = `
                                     <h3 style="padding-top:15px;font-size:25px;color:grey;margin-top: 25px; margin-bottom: 25px;">Questions, Comments, Concerns? <br />Feel Free to Contact me::</h3>
                                     
                                     <p>source code: <a href="https://github.com/JWally/procare-media-downloader">GitHub</a></p>
-                                    <p>e-mail: <a href="mailto: procare.excavator@wolcott.io">procare.excavator@wolcott.io</a></p>
+                                    <p>e-mail: <a href="mailto: justin@wolcott.io">justin@wolcott.io</a></p>
                                     <p>linkedin: <a href="https://www.linkedin.com/in/justinwwolcott/">https://www.linkedin.com/in/justinwwolcott/</a></p>
                                 </div>
                                 
