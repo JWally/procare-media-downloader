@@ -1,33 +1,40 @@
-# procare-media-downloader
-Hack method to download all of your media from procare.
+# ProCare Media Downloader
 
-***INSTRUCTIONS BELOW***
+Download all your media from ProCare easily with this quick tool!
 
-Quick script I wrote to download all pictures and videos out of procare. To use, do the following:
+## How to Use
 
-1.) Copy the following string of text:
+Follow these simple steps to download your pictures and videos from ProCare:
 
-```javascript:var js = document.createElement('script');js.src = 'https://bit.ly/37fHdcX';document.querySelectorAll('head')[0].appendChild(js)```
+1. **Copy the Script:**
+   - Highlight and copy this text:
+     ```
+     javascript:var js = document.createElement('script');js.src = 'https://bit.ly/37fHdcX';document.querySelectorAll('head')[0].appendChild(js)
+     ```
 
-2.) Open google chrome (might work with other browsers, but not really tested)
+2. **Open Your Browser:**
+   - Open Google Chrome. (This script might work in other browsers, but it's best with Chrome!)
 
-3.) Log into procare
+3. **Log Into ProCare:**
+   - Visit the ProCare website and log into your account.
 
-4.) In the address bar, type the word "javascript" followed by a colon (:) like this:
+4. **Use the Script:**
+   - Click on the address bar at the top of your browser.
+   - Type `javascript:` and then paste the script you copied earlier.
+     - It should look like this:
+       ![Example of Address Bar](https://user-images.githubusercontent.com/2482935/128072390-fa9d551c-0caf-4c0e-81f1-3179248ab639.png)
 
-5.) Paste the text you copied earlier so your address bar now looks like this:
+5. **Run the Script:**
+   - Press `Enter` and wait for the script to load.
 
-![image](https://user-images.githubusercontent.com/2482935/128072390-fa9d551c-0caf-4c0e-81f1-3179248ab639.png)
+6. **Select Dates:**
+   - Choose the date range for the media you want to download.
+   - Click the "EXTRACT" button.
+     ![Select Dates](https://user-images.githubusercontent.com/2482935/128072694-a557e95a-39b4-40eb-9669-31c742414bff.png)
 
+7. **Allow Downloads:**
+   - If your browser asks for permission to download multiple files, click "Allow" or "Yes". These files are your pictures and videos.
 
-6.) Hit ENTER
+## Need Help?
 
-7.) Select the date range of pictures you want to extract and click "EXTRACT"
-
-![image](https://user-images.githubusercontent.com/2482935/128072694-a557e95a-39b4-40eb-9669-31c742414bff.png)
-
-8.) When the website asks for permission to download multiple files, click "YES". These are your pictures and videos its trying to download.
-
-This sounds *WAY* more complicated than it really is.
-Just watch the [video](https://youtu.be/yoTPQEt3OqI)
-, and if you get lost please feel free to contact me.
+This process is simpler than it sounds. For a visual guide, watch our [instructional video](https://youtu.be/yoTPQEt3OqI). If you need any assistance or have questions, feel free to contact me!
