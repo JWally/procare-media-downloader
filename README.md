@@ -38,3 +38,9 @@ Follow these simple steps to download your pictures and videos from ProCare:
 ## Need Help?
 
 This process is simpler than it sounds. For a visual guide, watch our [instructional video](https://youtu.be/yoTPQEt3OqI). If you need any assistance or have questions, feel free to contact me!
+
+## Contact Info
+
+- **Email:** [justin@wolcott.io](mailto:justin@wolcott.io)
+- **LinkedIn:** [Justin Wolcott](https://www.linkedin.com/in/justinwwolcott/)
+
