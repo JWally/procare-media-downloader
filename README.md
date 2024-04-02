@@ -39,6 +39,8 @@ Follow these simple steps to download your pictures and videos from ProCare:
 
 This process is simpler than it sounds. For a visual guide, watch our [instructional video](https://youtu.be/yoTPQEt3OqI). If you need any assistance or have questions, feel free to contact me!
 
+(p.s. I've updated the script and downloaded 750 pictures/movies in 1:30 - still need to update video :-)
+
 ## Contact Info
 
 - **Email:** [justin@wolcott.io](mailto:justin@wolcott.io)
