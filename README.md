@@ -6,33 +6,31 @@ Download all your media from ProCare easily with this quick tool!
 
 Follow these simple steps to download your pictures and videos from ProCare:
 
-1. **Copy the Script:**
+1. **Log Into ProCare:**
+   - Visit the ProCare website and log into your account *ON GOOGLE CHROME* (This script might work in other browsers, but it's been successful with chrome...).
+   - **n.b. This won't work if you're not logged in**
+
+2. **Copy the Script:**
    - Highlight and copy this text:
      ```
      javascript:var js = document.createElement('script');js.src = 'https://bit.ly/37fHdcX';document.querySelectorAll('head')[0].appendChild(js)
      ```
 
-2. **Open Your Browser:**
-   - Open Google Chrome. (This script might work in other browsers, but it's best with Chrome!)
-
-3. **Log Into ProCare:**
-   - Visit the ProCare website and log into your account.
-
-4. **Use the Script:**
+3. **Use the Script:**
    - Click on the address bar at the top of your browser.
    - Type `javascript:` and then paste the script you copied earlier.
      - It should look like this:
        ![Example of Address Bar](https://user-images.githubusercontent.com/2482935/128072390-fa9d551c-0caf-4c0e-81f1-3179248ab639.png)
 
-5. **Run the Script:**
+4. **Run the Script:**
    - Press `Enter` and wait for the script to load.
 
-6. **Select Dates:**
+5. **Select Dates:**
    - Choose the date range for the media you want to download.
    - Click the "EXTRACT" button.
      ![Select Dates](https://user-images.githubusercontent.com/2482935/128072694-a557e95a-39b4-40eb-9669-31c742414bff.png)
 
-7. **Allow Downloads:**
+6. **Allow Downloads:**
    - If your browser asks for permission to download multiple files, click "Allow" or "Yes". These files are your pictures and videos.
 
 ## Need Help?
